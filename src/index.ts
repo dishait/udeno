@@ -1,4 +1,25 @@
-import { resolve } from 'path'
-const foo = 1
+interface Options {
+	/**
+	 * @default src/index.ts
+	 */
+	index: string
+	/**
+	 * @default deps
+	 */
+	depsDir: string
+	/**
+	 * @default true
+	 */
+	npmSpecifiers: boolean
 
-export { resolve, foo }
+	importNormalize: (
+		filepath: string,
+		_import: string
+	) => string
+	exportNormalize: (
+		filepath: string,
+		_export: string
+	) => string
+}
+
+export function generate(options: Options) {}

@@ -1,13 +1,13 @@
 {
-  "version": "0.0.0",
-  "name": "name",
-  "description": "description",
+  "version": "0.0.1",
+  "name": "unbudle-deno",
+  "description": "provides out of the box deno support for node packages with unbundle in production",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/name/repo.git"
+    "url": "git+https://github.com/dishait/unbundle.git"
   },
   "exports": {
     ".": {
@@ -36,19 +36,18 @@
     "release": "bumpp --commit --push --tag && npm publish"
   },
   "keywords": [
-    "lib",
-    "tool",
-    "node",
-    "utils"
+    "deno",
+    "unbundle",
+    "out of the box"
   ],
   "author": {
-    "name": "name",
-    "email": "xx@xx.com",
-    "url": "https://github.com/name"
+    "name": "markthree",
+    "email": "1801982702@qq.com",
+    "url": "https://github.com/markthree"
   },
   "bugs": {
-    "email": "xx@xx.com",
-    "url": "https://github.com/name/repo/issues"
+    "email": "1801982702@qq.com",
+    "url": "https://github.com/dishait/unbundle-deno/issues"
   },
   "license": "MIT",
   "devDependencies": {
