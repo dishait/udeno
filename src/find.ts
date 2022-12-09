@@ -3,27 +3,35 @@ import {
 	findExports as _findExports,
 	findStaticImports as _findStaticImports
 } from 'mlly'
-import type { Module } from './type'
+import type { Info } from './type'
 import type { ESMExport, StaticImport } from 'mlly'
 
 function transform(
-	modules: Array<ESMExport | StaticImport>
+	mode: Info['mode'],
+	infos: Array<ESMExport | StaticImport>
 ) {
-	return modules
+	return infos
 		.filter(v => v.specifier)
 		.map(v => {
 			return {
+				mode,
 				code: v.code,
 				specifier: v!.specifier,
 				isNodeBuiltin: isNodeBuiltin(v.specifier)
-			} as Module
+			} as Info
 		})
 }
 
 export function findExports(content: string) {
-	return transform(_findExports(content))
+	return transform('export', _findExports(content))
 }
 
 export function findStaticImports(content: string) {
-	return transform(_findStaticImports(content))
+	return transform('import', _findStaticImports(content))
+}
+
+export function find(content: string) {
+	const exportInfos = findExports(content)
+	const importInfos = findStaticImports(content)
+	return [...exportInfos, ...importInfos]
 }

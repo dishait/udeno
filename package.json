@@ -1,13 +1,13 @@
 {
   "version": "0.0.1",
-  "name": "unbudle-deno",
-  "description": "provides out of the box deno support for node packages with unbundle in production",
+  "name": "udeno",
+  "description": "provides out of the box deno support for node packages in production",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dishait/unbundle.git"
+    "url": "git+https://github.com/dishait/udeno.git"
   },
   "exports": {
     ".": {
@@ -47,7 +47,7 @@
   },
   "bugs": {
     "email": "1801982702@qq.com",
-    "url": "https://github.com/dishait/unbundle-deno/issues"
+    "url": "https://github.com/dishait/udeno/issues"
   },
   "license": "MIT",
   "devDependencies": {

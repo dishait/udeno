@@ -1,4 +1,4 @@
-export interface IGenerateOptions {
+export interface IOptions {
 	/**
 	 * @default src/index.ts
 	 */
@@ -7,10 +7,6 @@ export interface IGenerateOptions {
 	 * @default deps
 	 */
 	depsDir: string
-	/**
-	 * @default mod.ts
-	 */
-	dest: string
 	/**
 	 * @default true
 	 */
@@ -24,35 +20,31 @@ export interface IGenerateOptions {
 	 * https://esm.sh/
 	 */
 	npmCDN: string
-	importNormalize: (
-		payload: ImportNormalizePayload
-	) => Promise<string>
-	exportNormalize: (
-		payload: ExportNormalizePayload
-	) => Promise<string>
+
+	normalize: (payload: NormalizePayload) => Promise<string>
 }
 
-export type Module = {
+export type Info = {
 	code: string
 	specifier: string
 	isNodeBuiltin: boolean
+	mode: 'export' | 'import'
 }
 
-export type ImportNormalizePayload = {
+export type Infos = Info[]
+
+interface File {
 	content: string
 	filepath: string
-	_import: Module
-	npmCDN: string
-	npmSpecifiers?: boolean
 }
 
-export type ExportNormalizePayload = Omit<
-	ImportNormalizePayload,
-	'_import'
-> & { _export: Module }
+type NpmOptions = Pick<IOptions, 'npmCDN' | 'npmSpecifiers'>
 
-export type BaseNormalizePayload = Omit<
-	ImportNormalizePayload,
-	'_import' | 'filepath'
-> &
-	Module
+export type NormalizePayload = Info & NpmOptions & File
+
+export type ReducePayload = NpmOptions &
+	File & {
+		infos: Infos
+	} & Pick<IOptions, 'normalize'>
+
+export type ReducePretreat = (infos: Infos) => Infos

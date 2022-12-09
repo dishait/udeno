@@ -1,6 +1,10 @@
 import { readTextFile } from '../src/fs'
 import { describe, expect, it } from 'vitest'
-import { findExports, findStaticImports } from '../src/find'
+import {
+	find,
+	findExports,
+	findStaticImports
+} from '../src/find'
 
 describe('find', async () => {
 	const bar = await readTextFile('test/fixture/find/bar.ts')
@@ -13,12 +17,14 @@ describe('find', async () => {
 			    "code": "export { bar } from './bar'
 			",
 			    "isNodeBuiltin": false,
+			    "mode": "export",
 			    "specifier": "./bar",
 			  },
 			  {
 			    "code": "export * from './bar'
 			",
 			    "isNodeBuiltin": false,
+			    "mode": "export",
 			    "specifier": "./bar",
 			  },
 			]
@@ -35,6 +41,7 @@ describe('find', async () => {
 
 			",
 			    "isNodeBuiltin": false,
+			    "mode": "import",
 			    "specifier": "./bar",
 			  },
 			]
@@ -45,13 +52,70 @@ describe('find', async () => {
 			[
 			  {
 			    "code": "import { format } from 'path'
-
 			",
 			    "isNodeBuiltin": true,
+			    "mode": "import",
 			    "specifier": "path",
+			  },
+			  {
+			    "code": "import { detectSyntax } from 'mlly'
+
+			",
+			    "isNodeBuiltin": false,
+			    "mode": "import",
+			    "specifier": "mlly",
 			  },
 			]
 		`
 		)
+	})
+
+	it('find', async () => {
+		expect(find(foo)).toMatchInlineSnapshot(`
+			[
+			  {
+			    "code": "export { bar } from './bar'
+			",
+			    "isNodeBuiltin": false,
+			    "mode": "export",
+			    "specifier": "./bar",
+			  },
+			  {
+			    "code": "export * from './bar'
+			",
+			    "isNodeBuiltin": false,
+			    "mode": "export",
+			    "specifier": "./bar",
+			  },
+			  {
+			    "code": "import { bar } from './bar'
+
+			",
+			    "isNodeBuiltin": false,
+			    "mode": "import",
+			    "specifier": "./bar",
+			  },
+			]
+		`)
+
+		expect(find(bar)).toMatchInlineSnapshot(`
+			[
+			  {
+			    "code": "import { format } from 'path'
+			",
+			    "isNodeBuiltin": true,
+			    "mode": "import",
+			    "specifier": "path",
+			  },
+			  {
+			    "code": "import { detectSyntax } from 'mlly'
+
+			",
+			    "isNodeBuiltin": false,
+			    "mode": "import",
+			    "specifier": "mlly",
+			  },
+			]
+		`)
 	})
 })

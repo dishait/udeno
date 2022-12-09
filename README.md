@@ -1,6 +1,6 @@
-# unbundle-deno
+# udeno
 
-provides out of the box [deno](https://deno.land/x) support for node packages with unbundle in production
+provides out of the box [deno](https://deno.land/x) support for node packages in production
 
 <br />
 

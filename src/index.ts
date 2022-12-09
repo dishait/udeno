@@ -1,64 +1,111 @@
 import copy from 'cpy'
 import fg from 'fast-glob'
-import type { IGenerateOptions } from './type'
+import { find } from './find'
+import { defaultNormalize } from './normalize'
 import { clean, writeTextFile, readTextFile } from './fs'
-import {
-	defaultExportNormalize,
-	defaultImportNormalize
-} from './normalize'
-import { findExports, findStaticImports } from './find'
+import type {
+	IOptions,
+	ReducePayload,
+	ReducePretreat
+} from './type'
 
-export async function unbundleDeno(
-	options: Partial<IGenerateOptions> = {}
+export async function udeno(
+	options: Partial<IOptions> = {}
 ) {
 	const {
 		src = 'src',
-		dest = 'mod.ts',
 		depsDir = 'deps',
 		npmSpecifiers = true,
 		index = 'src/index.ts',
 		npmCDN = 'https://esm.sh/',
-		importNormalize = defaultImportNormalize,
-		exportNormalize = defaultExportNormalize
+		normalize = defaultNormalize
 	} = options
 
-	// clean
-	await clean(dest)
-	await clean(depsDir)
+	const dest = 'mod.ts'
 
-	// copy files to depsDir
-	await copy([src, `!${index}`], depsDir)
-
-	// scan all files
-	const filepaths = await fg(`${src}/**/*.ts`)
-
-	filepaths.forEach(async filepath => {
+	async function generate(
+		filepath: string,
+		pretreat: ReducePretreat = silence
+	) {
 		let content = await readTextFile(filepath)
+		const infos = find(content)
 
-		const _imports = findStaticImports(content)
-
-		content = await _imports.reduce(async (p, c) => {
-			return await importNormalize({
-				filepath,
-				content: await p,
-				_import: c,
+		content = await reduce(
+			{
+				infos,
 				npmCDN,
+				content,
+				filepath,
+				normalize,
 				npmSpecifiers
-			})
-		}, Promise.resolve(content))
-
-		const _exports = findExports(content)
-
-		content = await _exports.reduce(async (p, c) => {
-			return await exportNormalize({
-				npmCDN,
-				filepath,
-				_export: c,
-				npmSpecifiers,
-				content: await p
-			})
-		}, Promise.resolve(content))
+			},
+			pretreat
+		)
 
 		await writeTextFile(filepath, content)
+	}
+
+	// clean
+	await parallel([clean(dest), clean(depsDir)])
+
+	// copy files to depsDir
+	await parallel([
+		copy(index, dest),
+		copy([src, `!${index}`], depsDir)
+	])
+
+	// scan all files
+	const filepaths = await fg(`${depsDir}/**/*.ts`)
+	const generatePromises = filepaths.map(filepath =>
+		generate(filepath)
+	)
+
+	const destGeneratePromise = generate(dest, infos => {
+		return infos.map(info => {
+			return {
+				...info,
+				code: info.code.replace(src, depsDir)
+			}
+		})
 	})
+
+	generatePromises.push(destGeneratePromise)
+
+	await parallel(generatePromises)
+}
+
+export function reduce(
+	payload: ReducePayload,
+	pretreat: ReducePretreat = silence
+) {
+	const {
+		infos,
+		npmCDN,
+		content,
+		filepath,
+		normalize,
+		npmSpecifiers
+	} = payload
+
+	return pretreat(infos).reduce(
+		async (normalizePromise, info) => {
+			return await normalize({
+				npmCDN,
+				filepath,
+				npmSpecifiers,
+				mode: info.mode,
+				code: info.code,
+				specifier: info.specifier,
+				content: await normalizePromise,
+				isNodeBuiltin: info.isNodeBuiltin
+			})
+		},
+		Promise.resolve(content)
+	)
+}
+
+const parallel = Promise.all.bind(Promise)
+
+function silence<T>(v: T) {
+	return v
 }
