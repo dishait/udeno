@@ -1,7 +1,7 @@
 import copy from 'cpy'
-import defu from 'defu'
 import destr from 'destr'
 import fg from 'fast-glob'
+import { defu } from 'defu'
 import consola from 'consola'
 import { find } from './find'
 import type { IOptions } from './type'
