@@ -157,7 +157,9 @@ export async function udeno(
 
 const parallel = Promise.all.bind(Promise)
 
-async function generateVscodeSetting(vscode: Vscode) {
+export async function generateVscodeSetting(
+	vscode: Vscode
+) {
 	const { path } = vscode
 
 	consola.log(path)
@@ -182,3 +184,8 @@ async function generateVscodeSetting(vscode: Vscode) {
 
 	await writeTextFile(settingsFilePath, settingsText)
 }
+
+export * from './fs'
+export * from './type'
+export * from './find'
+export * from './normalize'
