@@ -2,8 +2,11 @@
   "name": "examples",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "tsx build.ts"
+  },
   "devDependencies": {
-    "name": "workspace:0.0.0"
+    "tsx": "^3.12.1",
+    "udeno": "workspace:*"
   }
 }

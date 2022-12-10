@@ -36,6 +36,7 @@ export async function defaultNormalize(
 			`${normalizeUrl(npmCDN)}${specifier}@${version}`
 		)
 	}
+
 	return replace(`${specifier}.ts`)
 }
 

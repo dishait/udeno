@@ -33,6 +33,7 @@
     "deps:fresh:major": "npx taze major -w",
     "deps:fresh:minor": "npx taze minor -w",
     "deps:fresh:patch": "npx taze patch -w",
+    "example:build": "cd examples && pnpm build",
     "release": "bumpp --commit --push --tag && npm publish"
   },
   "keywords": [

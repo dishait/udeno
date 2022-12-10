@@ -6,7 +6,7 @@ import {
 import type { Info } from './type'
 import type { ESMExport, StaticImport } from 'mlly'
 
-function transform(
+function transformFind(
 	mode: Info['mode'],
 	infos: Array<ESMExport | StaticImport>
 ) {
@@ -23,11 +23,14 @@ function transform(
 }
 
 export function findExports(content: string) {
-	return transform('export', _findExports(content))
+	return transformFind('export', _findExports(content))
 }
 
 export function findStaticImports(content: string) {
-	return transform('import', _findStaticImports(content))
+	return transformFind(
+		'import',
+		_findStaticImports(content)
+	)
 }
 
 export function find(content: string) {

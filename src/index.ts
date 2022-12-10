@@ -1,14 +1,12 @@
 import copy from 'cpy'
 import fg from 'fast-glob'
 import { find } from './find'
+import type { IOptions } from './type'
 import { defaultNormalize } from './normalize'
 import { normalize as normalizePath } from 'node:path'
-import { clean, writeTextFile, readTextFile } from './fs'
-import type {
-	IOptions,
-	ReducePayload,
-	ReducePretreat
-} from './type'
+import { clean, createTransformTextFile } from './fs'
+
+const dest = 'mod.ts'
 
 export async function udeno(
 	options: Partial<IOptions> = {}
@@ -22,42 +20,15 @@ export async function udeno(
 		normalize = defaultNormalize
 	} = options
 
-	const dest = './mod.ts'
-
-	async function generate(
-		filepath: string,
-		pretreat: ReducePretreat = silence
-	) {
-		let content = await readTextFile(filepath)
-		const infos = find(content)
-
-		content = await reduce(
-			{
-				infos,
-				npmCDN,
-				content,
-				filepath,
-				normalize,
-				npmSpecifiers
-			},
-			pretreat
-		)
-
-		await writeTextFile(filepath, content)
-	}
-
 	// clean
 	await parallel([clean(dest), clean(depsDir)])
 
+	// copy files
 	await parallel([
-		// copy files to depsDir
 		copy(src, depsDir, {
 			flat: true,
 			filter(file) {
-				return (
-					file.relativePath !==
-					normalizePath('src/index.ts')
-				)
+				return file.relativePath !== normalizePath(index)
 			}
 		}),
 		copy(index, './', {
@@ -70,56 +41,65 @@ export async function udeno(
 
 	// scan all files
 	const filepaths = await fg(`${depsDir}/**/*.ts`)
-	const generatePromises = filepaths.map(filepath =>
-		generate(filepath)
+
+	const transformDepFiles = createTransformTextFile(
+		async (filepath, content) => {
+			const infos = find(content)
+			return await infos.reduce(async (_content, info) => {
+				return await normalize({
+					npmCDN,
+					filepath,
+					npmSpecifiers,
+					content: await _content,
+					...info
+				})
+			}, Promise.resolve(content))
+		}
 	)
 
-	const destGeneratePromise = generate(dest, infos => {
-		return infos.map(info => {
-			return {
-				...info,
-				code: info.code.replace('./', `./${depsDir}`)
-			}
-		})
-	})
+	const transformDestFile = createTransformTextFile(
+		async (filepath, content) => {
+			const infos = find(content)
 
-	generatePromises.push(destGeneratePromise)
-
-	await parallel(generatePromises)
-}
-
-export function reduce(
-	payload: ReducePayload,
-	pretreat: ReducePretreat = silence
-) {
-	const {
-		infos,
-		npmCDN,
-		content,
-		filepath,
-		normalize,
-		npmSpecifiers
-	} = payload
-
-	return pretreat(infos).reduce(
-		async (normalizePromise, info) => {
-			return await normalize({
-				npmCDN,
-				filepath,
-				npmSpecifiers,
-				mode: info.mode,
-				code: info.code,
-				specifier: info.specifier,
-				content: await normalizePromise,
-				isNodeBuiltin: info.isNodeBuiltin
+			const newInfos = infos.map(info => {
+				return {
+					...info,
+					code: info.code.replace('./', `./${depsDir}/`),
+					specifier: info.specifier.replace(
+						'./',
+						`./${depsDir}/`
+					)
+				}
 			})
-		},
-		Promise.resolve(content)
+
+			const newContent = newInfos.reduce(
+				(_content, info, currentIndex) => {
+					const originCode = infos[currentIndex].code
+					return _content.replace(originCode, info.code)
+				},
+				content
+			)
+
+			return await newInfos.reduce(
+				async (_content, info) => {
+					return await normalize({
+						npmCDN,
+						filepath,
+						npmSpecifiers,
+						content: await _content,
+						...info
+					})
+				},
+				Promise.resolve(newContent)
+			)
+		}
 	)
+	// transform all files
+	const transformPromises = filepaths.map(filepath => {
+		return transformDepFiles(filepath)
+	})
+	transformPromises.push(transformDestFile(dest))
+	await parallel(transformPromises)
 }
 
 const parallel = Promise.all.bind(Promise)
-
-function silence<T>(v: T) {
-	return v
-}

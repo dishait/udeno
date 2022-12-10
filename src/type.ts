@@ -41,10 +41,3 @@ interface File {
 type NpmOptions = Pick<IOptions, 'npmCDN' | 'npmSpecifiers'>
 
 export type NormalizePayload = Info & NpmOptions & File
-
-export type ReducePayload = NpmOptions &
-	File & {
-		infos: Infos
-	} & Pick<IOptions, 'normalize'>
-
-export type ReducePretreat = (infos: Infos) => Infos
