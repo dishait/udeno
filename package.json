@@ -5,6 +5,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "udeno": "./bin/cli.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dishait/udeno.git"
@@ -17,6 +20,7 @@
     }
   },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {
