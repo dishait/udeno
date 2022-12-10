@@ -16,8 +16,10 @@ export async function defaultNormalize(
 	const replace = createReplace(content, code, specifier)
 
 	if (isNodeBuiltin) {
+		const nodeBuiltin = specifier.replace('node:', '')
+
 		return replace(
-			`https://deno.land/std/node/${specifier}.ts`
+			`https://deno.land/std/node/${nodeBuiltin}.ts`
 		)
 	}
 
