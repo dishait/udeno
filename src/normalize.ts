@@ -10,6 +10,7 @@ export async function defaultNormalize(
 		npmCDN,
 		content,
 		specifier,
+		stdVersion,
 		isNodeBuiltin,
 		npmSpecifiers
 	} = payload
@@ -19,8 +20,14 @@ export async function defaultNormalize(
 	if (isNodeBuiltin) {
 		const nodeBuiltin = specifier.replace('node:', '')
 
+		if (!stdVersion) {
+			return replace(
+				`https://deno.land/std/node/${nodeBuiltin}.ts`
+			)
+		}
+
 		return replace(
-			`https://deno.land/std/node/${nodeBuiltin}.ts`
+			`https://deno.land/std@${stdVersion}/node/${nodeBuiltin}.ts`
 		)
 	}
 

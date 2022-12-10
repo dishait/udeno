@@ -30,6 +30,7 @@ export async function udeno(
 		vscode,
 		depsDir,
 		normalize,
+		stdVersion,
 		npmSpecifiers
 	} = defu(options, {
 		src: 'src',
@@ -97,6 +98,7 @@ export async function udeno(
 				return await normalize({
 					npmCDN,
 					filepath,
+					stdVersion,
 					npmSpecifiers,
 					content: await _content,
 					...info
@@ -133,6 +135,7 @@ export async function udeno(
 					return await normalize({
 						npmCDN,
 						filepath,
+						stdVersion,
 						npmSpecifiers,
 						content: await _content,
 						...info

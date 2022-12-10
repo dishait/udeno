@@ -1,4 +1,5 @@
 export interface IOptions {
+	stdVersion: string
 	/**
 	 * @default "src/index.ts"
 	 */
@@ -52,4 +53,9 @@ interface File {
 
 type NpmOptions = Pick<IOptions, 'npmCDN' | 'npmSpecifiers'>
 
-export type NormalizePayload = Info & NpmOptions & File
+type Std = Pick<IOptions, 'stdVersion'>
+
+export type NormalizePayload = Info &
+	NpmOptions &
+	File &
+	Std
