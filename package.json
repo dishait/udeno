@@ -65,6 +65,8 @@
   },
   "dependencies": {
     "consola": "^2.15.3",
+    "defu": "^6.1.1",
+    "destr": "^1.2.2",
     "fast-glob": "^3.2.12",
     "local-pkg": "^0.4.2",
     "mlly": "^1.0.0"

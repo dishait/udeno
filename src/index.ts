@@ -1,29 +1,51 @@
 import copy from 'cpy'
+import defu from 'defu'
+import destr from 'destr'
 import fg from 'fast-glob'
 import consola from 'consola'
 import { find } from './find'
 import type { IOptions } from './type'
 import { defaultNormalize } from './normalize'
 import { normalize as normalizePath } from 'node:path'
-import { clean, createTransformTextFile } from './fs'
+import {
+	clean,
+	ensureFile,
+	readTextFile,
+	writeTextFile,
+	createTransformTextFile
+} from './fs'
 
 const dest = 'mod.ts'
 
 const log = consola.withTag('udeno')
+
+const vscodeSettingFilePath = '.vscode/setting.json'
 
 export async function udeno(
 	options: Partial<IOptions> = {}
 ) {
 	const {
 		src = 'src',
+		vscode = true,
 		depsDir = 'deps',
 		npmSpecifiers = true,
 		index = 'src/index.ts',
 		npmCDN = 'https://esm.sh/',
-		normalize = defaultNormalize
+		normalize = defaultNormalize,
+		vscodeSetting
 	} = options
 
 	log.start(`transform`)
+
+	if (vscode) {
+		await generateVscodeSetting(
+			dest,
+			depsDir,
+			vscodeSetting as IOptions['vscodeSetting']
+		)
+
+		log.info(`vscode setting generated`)
+	}
 
 	// clean
 	await parallel([clean(dest), clean(depsDir)])
@@ -116,3 +138,35 @@ export async function udeno(
 }
 
 const parallel = Promise.all.bind(Promise)
+
+async function generateVscodeSetting(
+	dest: string,
+	depsDir: string,
+	vscodeSetting: IOptions['vscodeSetting']
+) {
+	await ensureFile(vscodeSettingFilePath)
+
+	const finalVscodeSetting = defu(
+		{
+			'deno.enable': true,
+			'deno.enablePaths': [dest, depsDir]
+		},
+		vscodeSetting
+	)
+
+	const content = await readTextFile(vscodeSettingFilePath)
+
+	const setting = defu(
+		destr(content),
+		finalVscodeSetting
+	) as IOptions['vscodeSetting']
+
+	setting['deno.enablePaths'] = [
+		...new Set(setting['deno.enablePaths'])
+	]
+
+	await writeTextFile(
+		vscodeSettingFilePath,
+		JSON.stringify(setting, null, 2)
+	)
+}

@@ -1,5 +1,6 @@
+import { dirname } from 'node:path'
 import { existsSync } from 'node:fs'
-import { readFile, rm } from 'node:fs/promises'
+import { readFile, rm, mkdir } from 'node:fs/promises'
 import { writeFile as writeTextFile } from 'node:fs/promises'
 export { writeFile as writeTextFile } from 'node:fs/promises'
 
@@ -34,4 +35,16 @@ export function createTransformTextFile(
 
 		return filepath
 	}
+}
+
+export async function ensureFile(filepath: string) {
+	if (existsSync(filepath)) {
+		return
+	}
+
+	await mkdir(dirname(filepath), {
+		recursive: true
+	})
+
+	await writeTextFile(filepath, '')
 }

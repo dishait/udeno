@@ -9,6 +9,8 @@ importers:
       c8: ^7.12.0
       consola: ^2.15.3
       cpy: ^9.0.1
+      defu: ^6.1.1
+      destr: ^1.2.2
       fast-glob: ^3.2.12
       local-pkg: ^0.4.2
       mkdist: ^0.3.13
@@ -20,6 +22,8 @@ importers:
       vitest: ^0.15.2
     dependencies:
       consola: 2.15.3
+      defu: 6.1.1
+      destr: 1.2.2
       fast-glob: 3.2.12
       local-pkg: 0.4.2
       mlly: 1.0.0
@@ -813,7 +817,10 @@ packages:
 
   /defu/6.1.1:
     resolution: {integrity: sha512-aA964RUCsBt0FGoNIlA3uFgo2hO+WWC0fiC6DBps/0SFzkKcYoM/3CzVLIa5xSsrFjdioMdYgAIbwo80qp2MoA==}
-    dev: true
+
+  /destr/1.2.2:
+    resolution: {integrity: sha512-lrbCJwD9saUQrqUfXvl6qoM+QN3W7tLV5pAOs+OqOmopCCz/JkE05MHedJR1xfk4IAnZuJXPVuN5+7jNA2ZCiA==}
+    dev: false
 
   /dir-glob/3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}

@@ -21,6 +21,22 @@ export interface IOptions {
 	 */
 	npmCDN: string
 
+	/**
+	 * @default true
+	 */
+	vscode: boolean
+
+	/**
+	 * @default {
+	 * 'deno.enable': true,
+	 * 'deno.enablePaths': ["mod.ts", "deps"]
+	 * }
+	 */
+	vscodeSetting: {
+		'deno.enable': boolean
+		'deno.enablePaths': string[]
+	}
+
 	normalize: (payload: NormalizePayload) => Promise<string>
 }
 
