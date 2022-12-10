@@ -73,7 +73,7 @@ export function createReplace(
 		return content.replace(
 			code,
 			code.replace(
-				new RegExp(`(?<=from.*['"])${specifier}`),
+				new RegExp(`${specifier}(?=['"])`),
 				replaceValue
 			)
 		)
