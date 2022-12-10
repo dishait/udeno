@@ -1,3 +1,4 @@
+import consola from 'consola'
 import type { NormalizePayload } from './type'
 import { getPackageInfo, isPackageExists } from 'local-pkg'
 
@@ -23,8 +24,17 @@ export async function defaultNormalize(
 		)
 	}
 
-	if (isPackageExists(specifier)) {
-		const packageInfo = await getPackageInfo(specifier)
+	if (specifier.startsWith('./')) {
+		return replace(`${specifier}.ts`)
+	}
+
+	const packageExists = isPackageExists(specifier, {
+		paths: [process.cwd()]
+	})
+	if (packageExists) {
+		const packageInfo = await getPackageInfo(specifier, {
+			paths: [process.cwd()]
+		})
 
 		const version = packageInfo?.version
 
@@ -35,9 +45,12 @@ export async function defaultNormalize(
 		return replace(
 			`${normalizeUrl(npmCDN)}${specifier}@${version}`
 		)
+	} else {
+		consola
+			.withTag('udeno')
+			.error(new Error('package is not exists'))
+		process.exit(1)
 	}
-
-	return replace(`${specifier}.ts`)
 }
 
 export function normalizeUrl(cdn: string) {
@@ -52,7 +65,10 @@ export function createReplace(
 	return function replace(replaceValue: string) {
 		return content.replace(
 			code,
-			code.replace(specifier, replaceValue)
+			code.replace(
+				new RegExp(`(?<=from.*['"])${specifier}`),
+				replaceValue
+			)
 		)
 	}
 }

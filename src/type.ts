@@ -1,10 +1,10 @@
 export interface IOptions {
 	/**
-	 * @default src/index.ts
+	 * @default "src/index.ts"
 	 */
 	index: string
 	/**
-	 * @default deps
+	 * @default "deps"
 	 */
 	depsDir: string
 	/**
@@ -13,32 +13,28 @@ export interface IOptions {
 	npmSpecifiers: boolean
 
 	/**
-	 * @default src
+	 * @default "src"
 	 */
 	src: string
 	/**
-	 * https://esm.sh/
+	 * @default "https://esm.sh/"
 	 */
 	npmCDN: string
-
+	vscode: Vscode
 	/**
-	 * @default true
+	 * @default defaultNormalize
 	 */
-	vscode: boolean
-
-	/**
-	 * @default {
-	 * 'deno.enable': true,
-	 * 'deno.enablePaths': ["mod.ts", "deps"]
-	 * }
-	 */
-	vscodeSetting: {
-		'deno.enable': boolean
-		'deno.enablePaths': string[]
-	}
-
 	normalize: (payload: NormalizePayload) => Promise<string>
 }
+
+export type Vscode = Partial<{
+	disable: boolean
+	path: string
+	settings: Partial<{
+		'deno.enable': boolean
+		'deno.enablePaths': string[]
+	}>
+}>
 
 export type Info = {
 	code: string

@@ -4,7 +4,8 @@ import fg from 'fast-glob'
 import { defu } from 'defu'
 import consola from 'consola'
 import { find } from './find'
-import type { IOptions } from './type'
+
+import type { IOptions, Vscode } from './type'
 import { defaultNormalize } from './normalize'
 import { normalize as normalizePath } from 'node:path'
 import {
@@ -19,32 +20,46 @@ const dest = 'mod.ts'
 
 const log = consola.withTag('udeno')
 
-const vscodeSettingFilePath = '.vscode/setting.json'
-
 export async function udeno(
 	options: Partial<IOptions> = {}
 ) {
 	const {
-		src = 'src',
-		vscode = true,
-		depsDir = 'deps',
-		npmSpecifiers = true,
-		index = 'src/index.ts',
-		npmCDN = 'https://esm.sh/',
-		normalize = defaultNormalize,
-		vscodeSetting
-	} = options
+		src,
+		index,
+		npmCDN,
+		vscode,
+		depsDir,
+		normalize,
+		npmSpecifiers
+	} = defu(options, {
+		src: 'src',
+		depsDir: 'deps',
+		npmSpecifiers: true,
+		index: 'src/index.ts',
+		npmCDN: 'https://esm.sh/',
+		normalize: defaultNormalize,
+		vscode: {
+			disable: false,
+			path: '.vscode',
+			settings: {
+				'deno.enable': true
+			}
+		}
+	}) as IOptions
 
 	log.start(`transform`)
 
-	if (vscode) {
-		await generateVscodeSetting(
-			dest,
-			depsDir,
-			vscodeSetting as IOptions['vscodeSetting']
-		)
+	if (!vscode.disable) {
+		if (!vscode['settings']!['deno.enablePaths']) {
+			vscode['settings']!['deno.enablePaths'] = [
+				dest,
+				depsDir
+			]
+		}
 
-		log.info(`vscode setting generated`)
+		await generateVscodeSetting(vscode)
+
+		log.info(`vscode settings generated`)
 	}
 
 	// clean
@@ -139,34 +154,28 @@ export async function udeno(
 
 const parallel = Promise.all.bind(Promise)
 
-async function generateVscodeSetting(
-	dest: string,
-	depsDir: string,
-	vscodeSetting: IOptions['vscodeSetting']
-) {
-	await ensureFile(vscodeSettingFilePath)
+async function generateVscodeSetting(vscode: Vscode) {
+	const { path } = vscode
 
-	const finalVscodeSetting = defu(
-		{
-			'deno.enable': true,
-			'deno.enablePaths': [dest, depsDir]
-		},
-		vscodeSetting
+	consola.log(path)
+	const settingsFilePath = `${path}/settings.json`
+
+	await ensureFile(settingsFilePath!)
+
+	const originSettingText = await readTextFile(
+		settingsFilePath
 	)
 
-	const content = await readTextFile(vscodeSettingFilePath)
+	const settings = defu(
+		destr(originSettingText),
+		vscode.settings
+	) as Vscode['settings']
 
-	const setting = defu(
-		destr(content),
-		finalVscodeSetting
-	) as IOptions['vscodeSetting']
-
-	setting['deno.enablePaths'] = [
-		...new Set(setting['deno.enablePaths'])
+	settings!['deno.enablePaths'] = [
+		...new Set(settings!['deno.enablePaths'])
 	]
 
-	await writeTextFile(
-		vscodeSettingFilePath,
-		JSON.stringify(setting, null, 2)
-	)
+	const settingsText = JSON.stringify(settings, null, 2)
+
+	await writeTextFile(settingsFilePath, settingsText)
 }
