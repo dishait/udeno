@@ -6,7 +6,7 @@ provides out of the box [deno](https://deno.land/x) support for node packages in
 
 ## License
 
-Made with [name](https://github.com/markthree)
+Made with [markthree](https://github.com/markthree)
 
 Published under [MIT License](./LICENSE).
 
