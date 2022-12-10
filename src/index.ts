@@ -78,7 +78,7 @@ export async function udeno(
 		return infos.map(info => {
 			return {
 				...info,
-				code: info.code.replace(src, depsDir)
+				code: info.code.replace('./', `./${depsDir}`)
 			}
 		})
 	})
