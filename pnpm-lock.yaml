@@ -7,6 +7,7 @@ importers:
       '@types/node': ^18.11.12
       bumpp: ^8.2.1
       c8: ^7.12.0
+      consola: ^2.15.3
       cpy: ^9.0.1
       fast-glob: ^3.2.12
       local-pkg: ^0.4.2
@@ -18,6 +19,7 @@ importers:
       unbuild: ^1.0.2
       vitest: ^0.15.2
     dependencies:
+      consola: 2.15.3
       fast-glob: 3.2.12
       local-pkg: 0.4.2
       mlly: 1.0.0
@@ -747,7 +749,6 @@ packages:
 
   /consola/2.15.3:
     resolution: {integrity: sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw==}
-    dev: true
 
   /convert-source-map/1.9.0:
     resolution: {integrity: sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==}

@@ -1,5 +1,6 @@
 import copy from 'cpy'
 import fg from 'fast-glob'
+import consola from 'consola'
 import { find } from './find'
 import type { IOptions } from './type'
 import { defaultNormalize } from './normalize'
@@ -7,6 +8,8 @@ import { normalize as normalizePath } from 'node:path'
 import { clean, createTransformTextFile } from './fs'
 
 const dest = 'mod.ts'
+
+const log = consola.withTag('udeno')
 
 export async function udeno(
 	options: Partial<IOptions> = {}
@@ -20,8 +23,12 @@ export async function udeno(
 		normalize = defaultNormalize
 	} = options
 
+	log.start(`transform`)
+
 	// clean
 	await parallel([clean(dest), clean(depsDir)])
+
+	log.info(`${dest} and ${depsDir}/**/* was cleaned`)
 
 	// copy files
 	await parallel([
@@ -39,8 +46,12 @@ export async function udeno(
 		})
 	])
 
+	log.info(`${dest} and ${depsDir}/**/* was copyed`)
+
 	// scan all files
 	const filepaths = await fg(`${depsDir}/**/*.ts`)
+
+	log.info(`scan all files on ${depsDir}`)
 
 	const transformDepFiles = createTransformTextFile(
 		async (filepath, content) => {
@@ -100,6 +111,8 @@ export async function udeno(
 	})
 	transformPromises.push(transformDestFile(dest))
 	await parallel(transformPromises)
+
+	log.success('transform success')
 }
 
 const parallel = Promise.all.bind(Promise)
