@@ -59,10 +59,10 @@
     "tsx": "^3.12.1",
     "typescript": "^4.9.4",
     "unbuild": "^1.0.2",
-    "vitest": "^0.15.2"
+    "vitest": "^0.15.2",
+    "cpy": "^9.0.1"
   },
   "dependencies": {
-    "cpy": "^9.0.1",
     "fast-glob": "^3.2.12",
     "local-pkg": "^0.4.2",
     "mlly": "^1.0.0"
