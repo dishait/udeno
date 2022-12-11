@@ -14,10 +14,8 @@ in your node package root
 npx udeno
 ```
 
-limit CDN version in your `README.md`
-
 ```shell
-npx udeno --transformReadMe
+npx udeno --help
 ```
 
 <br />
