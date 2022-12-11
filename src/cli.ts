@@ -1,29 +1,40 @@
 import mri from 'mri'
 import consola from 'consola'
+import { cyan, blue, magenta, bold } from 'colorette'
 import { readPackageUp } from 'read-pkg-up'
-import { udeno, transformReadMe } from './index'
+import {
+	udeno,
+	transformReadMe as _transformReadMe
+} from './index'
+
+async function transformReadMe() {
+	const pkg = await readPackageUp()
+	await _transformReadMe({
+		path: 'README.md',
+		version: pkg?.packageJson!.version
+	})
+}
 
 async function main() {
 	const _argv = process.argv.slice(2)
 
 	const args = mri(_argv, {
-		boolean: ['WithTransformReadMe', 'onlyTransformReadMe'],
+		boolean: ['withTransformReadMe', 'onlyTransformReadMe'],
 		alias: {
-			transformReadMe: 'wtr',
+			withTransformReadMe: 'wtr',
 			onlyTransformReadMe: 'otr'
 		}
 	})
 
-	// @ts-ignore
+	if (args.h || args.help) {
+		return showHelp()
+	}
+
 	if (
-		args.WithTransformReadMe ||
-		args.onlyTransformReadMe
+		args.onlyTransformReadMe ||
+		args.withTransformReadMe
 	) {
-		const pkg = await readPackageUp()
-		await transformReadMe({
-			path: 'README.md',
-			version: pkg?.packageJson!.version
-		})
+		await transformReadMe()
 	}
 
 	if (!args.onlyTransformReadMe) {
@@ -34,3 +45,35 @@ async function main() {
 main().catch(err => {
 	consola.withTag('udeno').error(err.message)
 })
+
+function showHelp() {
+	const sections: string[] = []
+
+	const metas = [
+		{
+			alias: '--wtr',
+			usage: '--withTransformReadMe',
+			description: 'with transform readme version'
+		},
+		{
+			alias: '--otr',
+			usage: '--onlyTransformReadMe',
+			description: 'only transform readme version'
+		}
+	]
+
+	metas.forEach(meta => {
+		sections.push(
+			magenta('> ') +
+				cyan(meta.usage) +
+				' or ' +
+				cyan(meta.alias)
+		)
+
+		sections.push('   ' + meta.description)
+	})
+
+	sections.unshift(`${bold(blue('args help'))}`)
+
+	consola.withTag('udeno').log(sections.join('\n\n') + '\n')
+}

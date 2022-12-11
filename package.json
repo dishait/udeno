@@ -69,6 +69,7 @@
     "vitest": "^0.15.2"
   },
   "dependencies": {
+    "colorette": "^2.0.19",
     "consola": "^2.15.3",
     "defu": "^6.1.1",
     "destr": "^1.2.2",
