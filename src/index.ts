@@ -185,7 +185,6 @@ export async function generateVscodeSetting(
 ) {
 	const { path } = vscode
 
-	consola.log(path)
 	const settingsFilePath = `${path}/settings.json`
 
 	await ensureFile(settingsFilePath!)
