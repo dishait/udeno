@@ -5,7 +5,11 @@ import { defu } from 'defu'
 import consola from 'consola'
 import { find } from './find'
 
-import type { IOptions, Vscode } from './type'
+import type {
+	IOptions,
+	ReducePayload,
+	Vscode
+} from './type'
 import { defaultNormalize } from './normalize'
 import { normalize as normalizePath } from 'node:path'
 import {
@@ -94,16 +98,15 @@ export async function udeno(
 	const transformDepFiles = createTransformTextFile(
 		async (filepath, content) => {
 			const infos = find(content)
-			return await infos.reduce(async (_content, info) => {
-				return await normalize({
-					npmCDN,
-					filepath,
-					stdVersion,
-					npmSpecifiers,
-					content: await _content,
-					...info
-				})
-			}, Promise.resolve(content))
+			return reduce({
+				infos,
+				npmCDN,
+				content,
+				filepath,
+				normalize,
+				stdVersion,
+				npmSpecifiers
+			})
 		}
 	)
 
@@ -130,19 +133,15 @@ export async function udeno(
 				content
 			)
 
-			return await newInfos.reduce(
-				async (_content, info) => {
-					return await normalize({
-						npmCDN,
-						filepath,
-						stdVersion,
-						npmSpecifiers,
-						content: await _content,
-						...info
-					})
-				},
-				Promise.resolve(newContent)
-			)
+			return reduce({
+				npmCDN,
+				filepath,
+				normalize,
+				stdVersion,
+				npmSpecifiers,
+				infos: newInfos,
+				content: newContent
+			})
 		}
 	)
 	// transform all files
@@ -156,6 +155,28 @@ export async function udeno(
 }
 
 const parallel = Promise.all.bind(Promise)
+
+export async function reduce(payload: ReducePayload) {
+	const {
+		infos,
+		npmCDN,
+		content,
+		filepath,
+		normalize,
+		stdVersion,
+		npmSpecifiers
+	} = payload
+	return await infos.reduce(async (_content, info) => {
+		return await normalize({
+			npmCDN,
+			filepath,
+			stdVersion,
+			npmSpecifiers,
+			content: await _content,
+			...info
+		})
+	}, Promise.resolve(content))
+}
 
 export async function generateVscodeSetting(
 	vscode: Vscode

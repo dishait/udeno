@@ -1,10 +1,12 @@
-import { reduce } from '../src'
-import { find } from '../src/find'
-import { readTextFile } from '../src/fs'
 import { describe, expect, it } from 'vitest'
-import { defaultNormalize } from '../src/normalize'
+import {
+	find,
+	reduce,
+	readTextFile,
+	defaultNormalize
+} from '../src'
 
-describe('normalize', async () => {
+describe('udeno', async () => {
 	const npmCDN = 'https://esm.sh/'
 	const fooPath = 'test/fixture/find/foo.ts'
 	const barPath = 'test/fixture/find/bar.ts'
@@ -12,7 +14,7 @@ describe('normalize', async () => {
 	const fooContent = await readTextFile(fooPath)
 	const barContent = await readTextFile(barPath)
 
-	it('reduce', async () => {
+	it('normalize', async () => {
 		const fooInfos = find(fooContent)
 		const barInfos = find(barContent)
 
@@ -30,6 +32,9 @@ describe('normalize', async () => {
 			"import { bar } from './bar.ts'
 
 			console.log(bar)
+
+			const mlly = await import('npm:mlly@1.0.0')
+			const path = await import('https://deno.land/std/node/path.ts')
 
 			export { bar } from './bar.ts'
 

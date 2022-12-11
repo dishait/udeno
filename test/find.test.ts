@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import {
 	find,
 	findExports,
-	findStaticImports
+	findStaticImports,
+	findDynamicImports
 } from '../src/find'
 
 describe('find', async () => {
@@ -70,6 +71,29 @@ describe('find', async () => {
 		)
 	})
 
+	it('findDynamicImports', async () => {
+		expect(findDynamicImports(foo)).toMatchInlineSnapshot(`
+			[
+			  {
+			    "code": "import('mlly')",
+			    "isNodeBuiltin": false,
+			    "mode": "dynamic",
+			    "specifier": "mlly",
+			  },
+			  {
+			    "code": "import('path')",
+			    "isNodeBuiltin": true,
+			    "mode": "dynamic",
+			    "specifier": "path",
+			  },
+			]
+		`)
+
+		expect(findDynamicImports(bar)).toMatchInlineSnapshot(
+			'[]'
+		)
+	})
+
 	it('find', async () => {
 		expect(find(foo)).toMatchInlineSnapshot(`
 			[
@@ -94,6 +118,18 @@ describe('find', async () => {
 			    "isNodeBuiltin": false,
 			    "mode": "import",
 			    "specifier": "./bar",
+			  },
+			  {
+			    "code": "import('mlly')",
+			    "isNodeBuiltin": false,
+			    "mode": "dynamic",
+			    "specifier": "mlly",
+			  },
+			  {
+			    "code": "import('path')",
+			    "isNodeBuiltin": true,
+			    "mode": "dynamic",
+			    "specifier": "path",
 			  },
 			]
 		`)

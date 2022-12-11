@@ -40,8 +40,9 @@ export type Vscode = Partial<{
 export type Info = {
 	code: string
 	specifier: string
-	isNodeBuiltin: boolean
-	mode: 'export' | 'import'
+	expression?: string
+	isNodeBuiltin?: boolean
+	mode: 'export' | 'import' | 'dynamic'
 }
 
 export type Infos = Info[]
@@ -53,9 +54,15 @@ interface File {
 
 type NpmOptions = Pick<IOptions, 'npmCDN' | 'npmSpecifiers'>
 
-type Std = Pick<IOptions, 'stdVersion'>
+type Std = Partial<Pick<IOptions, 'stdVersion'>>
 
 export type NormalizePayload = Info &
 	NpmOptions &
 	File &
 	Std
+
+export type ReducePayload = NpmOptions &
+	Std &
+	File & {
+		infos: Infos
+	} & Pick<IOptions, 'normalize'>
