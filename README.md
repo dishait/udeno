@@ -30,7 +30,7 @@ udeno() // primary transform
 transformReadMe() // transform ReadMe version
 ```
 
-### config
+#### config
 
 ```ts
 import { udeno } from 'udeno'
