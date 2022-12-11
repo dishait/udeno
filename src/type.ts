@@ -66,3 +66,8 @@ export type ReducePayload = NpmOptions &
 	File & {
 		infos: Infos
 	} & Pick<IOptions, 'normalize'>
+
+export interface ITransformReadMePayload {
+	path: string
+	version?: string
+}

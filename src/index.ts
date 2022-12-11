@@ -6,10 +6,12 @@ import consola from 'consola'
 import { find } from './find'
 
 import type {
+	Vscode,
 	IOptions,
 	ReducePayload,
-	Vscode
+	ITransformReadMePayload
 } from './type'
+
 import { defaultNormalize } from './normalize'
 import { normalize as normalizePath } from 'node:path'
 import {
@@ -204,6 +206,24 @@ export async function generateVscodeSetting(
 	const settingsText = JSON.stringify(settings, null, 2)
 
 	await writeTextFile(settingsFilePath, settingsText)
+}
+
+export async function transformReadMe(
+	payload: ITransformReadMePayload
+) {
+	const { path, version } = payload
+	if (!version) {
+		const error = new Error('package version is not found')
+		log.error(error)
+		throw error
+	}
+
+	let content = await readTextFile(path)
+	content = content.replace(
+		/(?<=https:\/\/deno.land\/x\/.*@v)(.*)(?=\/)/,
+		version
+	)
+	await writeTextFile(path, content)
 }
 
 export * from './fs'
