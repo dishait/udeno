@@ -1,11 +1,12 @@
 import consola from 'consola'
 import type { NormalizePayload } from './type'
 import { getPackageInfo, isPackageExists } from 'local-pkg'
+import { getRemoteStdVersion } from './get'
 
 export async function defaultNormalize(
 	payload: NormalizePayload
 ) {
-	const {
+	let {
 		code,
 		npmCDN,
 		content,
@@ -19,6 +20,10 @@ export async function defaultNormalize(
 
 	if (isNodeBuiltin) {
 		const nodeBuiltin = specifier.replace('node:', '')
+
+		if (stdVersion === 'autoGetRemote') {
+			stdVersion = (await getRemoteStdVersion()) as string
+		}
 
 		if (!stdVersion) {
 			return replace(

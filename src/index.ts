@@ -29,7 +29,7 @@ const log = consola.withTag('udeno')
 export async function udeno(
 	options: Partial<IOptions> = {}
 ) {
-	const {
+	let {
 		src,
 		index,
 		npmCDN,
@@ -44,6 +44,7 @@ export async function udeno(
 		npmSpecifiers: true,
 		index: 'src/index.ts',
 		npmCDN: 'https://esm.sh/',
+		stdVersion: 'autoGetRemote',
 		normalize: defaultNormalize,
 		vscode: {
 			disable: false,
@@ -226,6 +227,7 @@ export async function transformReadMe(
 }
 
 export * from './fs'
+export * from './get'
 export * from './type'
 export * from './find'
 export * from './normalize'

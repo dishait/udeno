@@ -1,4 +1,7 @@
 export interface IOptions {
+	/**
+	 * @default "autoGetRemote" // The remote standard library b will be automatically obtained
+	 */
 	stdVersion: string
 	/**
 	 * @default "src/index.ts"
