@@ -6,7 +6,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "bin": {
-    "udeno": "./bin/cli.js"
+    "udeno": "./bin/cli.cjs"
   },
   "repository": {
     "type": "git",
