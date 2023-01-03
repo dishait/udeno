@@ -4,18 +4,30 @@ provides out of the box [deno](https://deno.land/x) support for node packages in
 
 <br />
 
+# README
+
+English | [简体中文](./README_CN.md)
+
+<br />
+
 ## Usage
+
+### install
+
+```shell
+npm i udeno -g
+```
 
 ### cli
 
 in your node package root
 
 ```shell
-npx udeno
+udeno
 ```
 
 ```shell
-npx udeno --help
+udeno --help
 ```
 
 <br />
