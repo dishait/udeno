@@ -1,7 +1,7 @@
-import consola from 'consola'
+import { log } from './shared'
+import { getRemoteStdVersion } from './get'
 import type { NormalizePayload } from './type'
 import { getPackageInfo, isPackageExists } from 'local-pkg'
-import { getRemoteStdVersion } from './get'
 
 export async function defaultNormalize(
 	payload: NormalizePayload
@@ -58,9 +58,7 @@ export async function defaultNormalize(
 			`${normalizeUrl(npmCDN)}${specifier}@${version}`
 		)
 	} else {
-		consola
-			.withTag('udeno')
-			.error(new Error('package is not exists'))
+		log.error(new Error('package is not exists'))
 		process.exit(1)
 	}
 }

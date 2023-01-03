@@ -2,8 +2,8 @@ import copy from 'cpy'
 import destr from 'destr'
 import fg from 'fast-glob'
 import { defu } from 'defu'
-import consola from 'consola'
 import { find } from './find'
+import { log } from './shared'
 
 import type {
 	Vscode,
@@ -23,8 +23,6 @@ import {
 } from './fs'
 
 const dest = 'mod.ts'
-
-const log = consola.withTag('udeno')
 
 export async function udeno(
 	options: Partial<IOptions> = {}

@@ -1,7 +1,7 @@
 import mri from 'mri'
-import consola from 'consola'
-import { cyan, blue, magenta, bold } from 'colorette'
+import { log } from './shared'
 import { readPackageUp } from 'read-pkg-up'
+import { cyan, blue, magenta, bold } from 'colorette'
 import {
 	udeno,
 	transformReadMe as _transformReadMe
@@ -43,7 +43,7 @@ async function main() {
 }
 
 main().catch(err => {
-	consola.withTag('udeno').error(err.message)
+	log.error(err.message)
 })
 
 function showHelp() {
@@ -75,5 +75,5 @@ function showHelp() {
 
 	sections.unshift(`${bold(blue('args help'))}`)
 
-	consola.withTag('udeno').log(sections.join('\n\n') + '\n')
+	log.log(sections.join('\n\n') + '\n')
 }
