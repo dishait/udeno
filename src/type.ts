@@ -12,7 +12,7 @@ export interface IOptions {
 	 */
 	depsDir: string
 	/**
-	 * @default true
+	 * @default false
 	 */
 	npmSpecifiers: boolean
 

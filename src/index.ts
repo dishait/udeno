@@ -39,7 +39,7 @@ export async function udeno(
 	} = defu(options, {
 		src: 'src',
 		depsDir: 'deps',
-		npmSpecifiers: true,
+		npmSpecifiers: false,
 		index: 'src/index.ts',
 		npmCDN: 'https://esm.sh/',
 		stdVersion: 'autoGetRemote',

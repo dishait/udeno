@@ -38,7 +38,7 @@ import { udeno } from 'udeno'
 udeno({
 	src: 'src', // Source code directory
 	depsDir: 'deps', // Directory of output transformation
-	npmSpecifiers: true, // open npm specifiers
+	npmSpecifiers: true, // open npm specifiers，Not recommended temporarily
 	index: 'src/index.ts', // Source code entry file
 	npmCDN: 'https://esm.sh/', // npm package cdn
 	normalize: defaultNormalize, // Allow you to customize the conversion
